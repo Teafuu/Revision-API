@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Revision_API.Models;
 
 namespace Revision_API.Data
@@ -12,8 +8,11 @@ namespace Revision_API.Data
         public Revision_APIContext (DbContextOptions<Revision_APIContext> options)
             : base(options)
         {
+
         }
 
-        public DbSet<Revision_API.Models.User> User { get; set; } = default!;
+        public DbSet<Revision_API.Models.User> Users { get; set; } = default!;
+        public DbSet<Revision_API.Models.Birthday> Birthdays { get; set; } = default!;
+        public DbSet<Revision_API.Models.Image> Images { get; set; } = default!;
     }
 }

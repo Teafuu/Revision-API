@@ -20,7 +20,7 @@ namespace Revision_API.Controllers
         [HttpPost(Name = "PostUser")]
         public void CreateUser(string email, string password)
         {
-            if (_context.User.Any(user => user.Email == email))
+            if (_context.Users.Any(user => user.Email == email))
             {
                 return;
             }
@@ -30,14 +30,14 @@ namespace Revision_API.Controllers
             Hallo.Email = email;
             Hallo.Password = password;
 
-            _context.User.Add(Hallo);
+            _context.Users.Add(Hallo);
             _context.SaveChanges();
         }
 
         [HttpGet(Name = "Validate")]
         public bool ValidateCredentials(string email, string password)
         {
-            return _context.User.Any(user => user.Email == email 
+            return _context.Users.Any(user => user.Email == email 
                                              && user.Password == password);
         }
     }
