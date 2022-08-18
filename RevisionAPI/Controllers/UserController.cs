@@ -18,11 +18,11 @@ namespace Revision_API.Controllers
         }
 
         [HttpPost(Name = "PostUser")]
-        public void CreateUser(string email, string password)
+        public bool CreateUser(string email, string password)
         {
             if (_context.Users.Any(user => user.Email == email))
             {
-                return;
+                return false;
             }
 
             User Hallo = new User();
@@ -32,6 +32,8 @@ namespace Revision_API.Controllers
 
             _context.Users.Add(Hallo);
             _context.SaveChanges();
+
+            return true;
         }
 
         [HttpGet(Name = "Validate")]
