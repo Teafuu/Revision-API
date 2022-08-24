@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Revision_API.Data;
 using Revision_API.Models;
+using Revision_API.Models.Dto.Request;
+using Revision_API.Models.Dto.Response;
 
 
 namespace Revision_API.Controllers
@@ -17,30 +19,62 @@ namespace Revision_API.Controllers
             _context = context;
         }
 
-        [HttpPost(Name = "PostUser")]
-        public bool CreateUser(string email, string password)
+        [HttpPost(Name = "CreateUser")]
+        public CreateAccountResponse CreateUser(CreateAccountRequest request)
         {
-            if (_context.Users.Any(user => user.Email == email))
+            if (!request.Email.Contains("@"))
+                return new CreateAccountResponse
+                {
+                    Error = "Invalid Email",
+                    Success = false
+                };
+
+            if (_context.Users.Any(user => user.Email == request.Email))
+                return new CreateAccountResponse
+                {
+                    Success = false,
+                    Error = "Email already exists"
+                };
+            
+
+            User Hallo = new User
             {
-                return false;
-            }
-
-            User Hallo = new User();
-
-            Hallo.Email = email;
-            Hallo.Password = password;
+                Email = request.Email,
+                Password = request.Password
+            };
 
             _context.Users.Add(Hallo);
             _context.SaveChanges();
 
-            return true;
+            return new CreateAccountResponse
+            {
+                Success = true
+            };
         }
 
-        [HttpGet(Name = "Validate")]
-        public bool ValidateCredentials(string email, string password)
+        [HttpPost(Name = "ValidateUser")]
+        public ValidateAccountResponse ValidateUser(ValidateAccountRequest request)
         {
-            return _context.Users.Any(user => user.Email == email 
-                                             && user.Password == password);
+            var users = _context.Users.Where(user => user.Email == request.Email);
+
+            if (!users.Any())
+                return new ValidateAccountResponse
+                {
+                    Error = "Email doesn't exist",
+                    Success = false
+                };
+
+            if (!users.Any(x => x.Password == request.Password))
+                return new ValidateAccountResponse
+                {
+                    Error = "Invalid password",
+                    Success = false
+                };
+
+            return new ValidateAccountResponse
+            {
+                Success = true
+            };
         }
     }
 }
