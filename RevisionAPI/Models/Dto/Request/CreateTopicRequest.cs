@@ -1,14 +1,10 @@
-﻿using System.Drawing;
-
-namespace Revision_API.Models
+﻿namespace Revision_API.Models.Dto.Request
 {
-    public class Topic
+    public class CreateTopicRequest
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime RevisionDateTime { get; set; }
-        public int ReminderCount { get; set; }
         public string Color { get; set; }
         public int UserId { get; set; }
     }

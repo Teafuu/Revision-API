@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Revision_API.Data;
 using Revision_API.Models;
+using Revision_API.Models.Dto.Request;
+using Revision_API.Models.Dto.Response;
 
 
 namespace Revision_API.Controllers
@@ -17,19 +19,20 @@ namespace Revision_API.Controllers
             _context = context;
         }
 
-        [HttpPost(Name = "PostTopic")]
-        public void CreateTopic(int userId, string title, string description, DateTime revisionDate)
+        [HttpPost(Name = "PostTopic")] //TODO: Remake into  Request and Response Objects.
+        public void CreateTopic(CreateTopicRequest request)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Id == userId);
+            var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
 
             if (user is null)
                 return;
 
             var topic = new Topic
             {
-                Title = title,
-                Description = description,
-                RevisionDateTime = revisionDate,
+                Title = request.Title,
+                Description = request.Description,
+                RevisionDateTime = request.RevisionDateTime,
+                Color = request.Color,
                 UserId = user.Id
             };
 
@@ -38,9 +41,9 @@ namespace Revision_API.Controllers
         }
 
         [HttpGet(Name = "GetTopics")]
-        public ICollection<Topic> GetTopics(int userId)
+        public GetTopicsResponse GetTopics(int id)
         {
-            return _context.Topics.Where(topic => topic.UserId == userId).ToList();
+            return new GetTopicsResponse {Topics = _context.Topics.Where(topic => topic.UserId == id).ToList()};
         }
     }
 }

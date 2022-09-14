@@ -33,7 +33,7 @@ namespace Revision_API.Services
 
         public void SendReminder(Topic topic)
         {
-            //idhk how to do this
+            //idek how to do this
         }
     }
 }
