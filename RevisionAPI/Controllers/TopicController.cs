@@ -39,6 +39,7 @@ namespace Revision_API.Controllers
             _context.Topics.Add(topic);
             _context.SaveChanges();
         }
+
         [HttpPatch(Name = "PatchTopic")] 
         public void PatchTopic([FromBody] PatchTopicRequest request)
         {

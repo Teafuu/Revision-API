@@ -76,5 +76,12 @@ namespace Revision_API.Controllers
                 Success = true
             };
         }
+
+        [HttpDelete(Name = "ResetDatabase")]
+        public void ResetDatabase()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
+        }
     }
 }
