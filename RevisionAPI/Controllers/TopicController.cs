@@ -19,7 +19,7 @@ namespace Revision_API.Controllers
             _context = context;
         }
 
-        [HttpPost(Name = "PostTopic")] //TODO: Remake into  Request and Response Objects.
+        [HttpPost(Name = "PostTopic")] 
         public void CreateTopic(CreateTopicRequest request)
         {
             var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
@@ -37,6 +37,27 @@ namespace Revision_API.Controllers
             };
 
             _context.Topics.Add(topic);
+            _context.SaveChanges();
+        }
+        [HttpPatch(Name = "PatchTopic")] 
+        public void PatchTopic([FromBody] PatchTopicRequest request)
+        {
+            var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
+
+            if (user is null)
+                return;
+
+            var topic = _context.Topics.Find(request.Id);
+
+            if (topic is null || topic.UserId != request.UserId)
+                return;
+            
+            topic.Color = request.Color;
+            topic.Description = request.Description;
+            topic.Title = request.Title;
+            topic.RevisionDateTime = request.RevisionDateTime;
+            
+            _context.Topics.Update(topic);
             _context.SaveChanges();
         }
 
