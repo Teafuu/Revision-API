@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Revision_API.Data;
 using Revision_API.Models;
 using Revision_API.Models.Dto.Request;
@@ -37,6 +36,19 @@ namespace Revision_API.Controllers
             };
 
             _context.Topics.Add(topic);
+            _context.SaveChanges();
+        }
+
+        [HttpPost(Name = "ReviseTopic")]
+        public void Revise(SendReviseRequest request)
+        {
+            var topic = _context.Topics.FirstOrDefault(x => x.Id == request.Id);
+
+            if (topic is null || topic.UserId != request.UserId)
+                return;
+            topic.ReminderCount++;
+            topic.LastRevisedDateTime = DateTime.Now;
+            topic.RevisionDateTime.AddDays(7);
             _context.SaveChanges();
         }
 

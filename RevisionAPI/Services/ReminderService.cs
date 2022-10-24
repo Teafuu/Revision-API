@@ -11,7 +11,7 @@ namespace Revision_API.Services
         {
             _context = context;
         }
-
+            
         public void Remind()
         {
             foreach (var topic in _context.Topics)

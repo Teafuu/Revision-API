@@ -40,6 +40,7 @@ namespace Revision_API.Controllers
             User Hallo = new User
             {
                 Email = request.Email,
+                Name = request.Name,
                 Password = request.Password
             };
 
@@ -71,9 +72,13 @@ namespace Revision_API.Controllers
                     Success = false
                 };
 
+            var user = users.FirstOrDefault();
+
             return new ValidateAccountResponse
             {
-                Success = true
+                Success = true,
+                UserId = user.Id.ToString(),
+                Name = user.Name
             };
         }
 
