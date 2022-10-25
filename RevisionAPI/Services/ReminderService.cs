@@ -10,7 +10,7 @@ namespace Revision_API.Services
         public ReminderService(Revision_APIContext context)
         {
             _context = context;
-        }
+        }   
             
         public void Remind()
         {

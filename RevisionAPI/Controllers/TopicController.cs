@@ -19,65 +19,101 @@ namespace Revision_API.Controllers
         }
 
         [HttpPost(Name = "PostTopic")] 
-        public void CreateTopic(CreateTopicRequest request)
+        public ActionResult CreateTopic(CreateTopicRequest request)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
-
-            if (user is null)
-                return;
-
-            var topic = new Topic
+            try
             {
-                Title = request.Title,
-                Description = request.Description,
-                RevisionDateTime = request.RevisionDateTime,
-                Color = request.Color,
-                UserId = user.Id
-            };
+                var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
 
-            _context.Topics.Add(topic);
-            _context.SaveChanges();
+                if (user is null)
+                    BadRequest("User not found");
+
+                var topic = new Topic
+                {
+                    Title = request.Title,
+                    Description = request.Description,
+                    RevisionDateTime = request.RevisionDateTime,
+                    Color = request.Color,
+                    UserId = user.Id
+                };
+
+                _context.Topics.Add(topic);
+                _context.SaveChanges();
+                return Ok();
+            }catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost(Name = "ReviseTopic")]
-        public void Revise(SendReviseRequest request)
+        public ActionResult Revise(SendReviseRequest request)
         {
-            var topic = _context.Topics.FirstOrDefault(x => x.Id == request.Id);
+            try
+            {
+                var topic = _context.Topics.FirstOrDefault(x => x.Id == request.Id);
 
-            if (topic is null || topic.UserId != request.UserId)
-                return;
-            topic.ReminderCount++;
-            topic.LastRevisedDateTime = DateTime.Now;
-            topic.RevisionDateTime.AddDays(7);
-            _context.SaveChanges();
+                if (topic is null || topic.UserId != request.UserId)
+                    return BadRequest("Invalid user id");
+
+                topic.ReminderCount++;
+                topic.LastRevisedDateTime = DateTime.Now;
+                topic.RevisionDateTime.AddDays(7);
+
+                _context.SaveChanges();
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPatch(Name = "PatchTopic")] 
-        public void PatchTopic([FromBody] PatchTopicRequest request)
+        public ActionResult PatchTopic([FromBody] PatchTopicRequest request)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
+            try
+            {
+                var user = _context.Users.FirstOrDefault(x => x.Id == request.UserId);
 
-            if (user is null)
-                return;
+                if (user is null)
+                    return BadRequest("User not found");
 
-            var topic = _context.Topics.Find(request.Id);
+                var topic = _context.Topics.Find(request.Id);
 
-            if (topic is null || topic.UserId != request.UserId)
-                return;
-            
-            topic.Color = request.Color;
-            topic.Description = request.Description;
-            topic.Title = request.Title;
-            topic.RevisionDateTime = request.RevisionDateTime;
-            
-            _context.Topics.Update(topic);
-            _context.SaveChanges();
+                if (topic is null || topic.UserId != request.UserId)
+                    return BadRequest("Invalid User");
+
+                topic.Color = request.Color;
+                topic.Description = request.Description;
+                topic.Title = request.Title;
+                topic.RevisionDateTime = request.RevisionDateTime;
+
+                _context.Topics.Update(topic);
+                _context.SaveChanges();
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpGet(Name = "GetTopics")]
-        public GetTopicsResponse GetTopics(int id)
+        public ActionResult<GetTopicsResponse> GetTopics(int id)
         {
-            return new GetTopicsResponse {Topics = _context.Topics.Where(topic => topic.UserId == id).ToList()};
+            try
+            {
+                var user = _context.Users.FirstOrDefault(x => x.Id == id);
+
+                if (user is null)
+                    return BadRequest("User not found");
+
+                return Ok(_context.Topics.Where(x => x.UserId == id).ToList());
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }
