@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
+using Revision_API.API.Messaging;
 using Revision_API.Data;
 using Revision_API.Models;
 using Revision_API.Models.Dto.Request;
@@ -43,7 +44,8 @@ namespace Revision_API.Controllers
                 {
                     Email = request.Email,
                     Name = request.Name,
-                    Password = request.Password
+                    Password = request.Password,
+                    DeviceToken = request.DeviceToken
                 };
 
                 _context.Users.Add(Hallo);

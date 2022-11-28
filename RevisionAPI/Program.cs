@@ -1,18 +1,21 @@
 using Microsoft.EntityFrameworkCore;
+using Revision_API.API.Messaging;
+using Revision_API.API.Messaging.Interfaces;
 using Revision_API.Data;
+using Revision_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<Revision_APIContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Revision_APIContext") 
-                         ?? throw new InvalidOperationException("Connection string 'Revision_APIContext' not found.")));
-
-// Add services to the container.
+                         ?? throw new InvalidOperationException("Connection string 'Revision_APIContext' not found."))
+        .UseLazyLoadingProxies());
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IMessagingApi, MessagingApi>();
+builder.Services.AddHostedService<ReminderService>();
 
 var app = builder.Build();
 

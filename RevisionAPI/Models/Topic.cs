@@ -9,8 +9,9 @@ namespace Revision_API.Models
         public string Description { get; set; }
         public DateTime RevisionDateTime { get; set; }
         public DateTime LastRevisedDateTime { get; set; }
+        public DateTime NextPossibleRemindDateTime { get; set; }
         public int ReminderCount { get; set; }
         public string Color { get; set; }
-        public int UserId { get; set; }
+        public virtual User User { get; set; }
     }
 }

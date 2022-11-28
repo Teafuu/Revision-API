@@ -2,6 +2,6 @@
 {
     public class GetTopicsResponse
     {
-        public ICollection<Topic> Topics { get; set; }
+        public ICollection<TopicDto> Topics { get; set; }
     }
 }

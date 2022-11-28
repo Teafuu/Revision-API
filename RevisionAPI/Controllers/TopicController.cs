@@ -34,11 +34,12 @@ namespace Revision_API.Controllers
                     Description = request.Description,
                     RevisionDateTime = request.RevisionDateTime,
                     Color = request.Color,
-                    UserId = user.Id
+                    User = user
                 };
 
                 _context.Topics.Add(topic);
                 _context.SaveChanges();
+
                 return Ok();
             }catch (Exception ex)
             {
@@ -53,12 +54,12 @@ namespace Revision_API.Controllers
             {
                 var topic = _context.Topics.FirstOrDefault(x => x.Id == request.Id);
 
-                if (topic is null || topic.UserId != request.UserId)
+                if (topic is null || topic.User.Id != request.UserId)
                     return BadRequest("Invalid user id");
 
                 topic.ReminderCount++;
                 topic.LastRevisedDateTime = DateTime.Now;
-                topic.RevisionDateTime.AddDays(7);
+                topic.RevisionDateTime = topic.RevisionDateTime.AddDays(7);
 
                 _context.SaveChanges();
                 return Ok();
@@ -81,7 +82,7 @@ namespace Revision_API.Controllers
 
                 var topic = _context.Topics.Find(request.Id);
 
-                if (topic is null || topic.UserId != request.UserId)
+                if (topic is null || topic.User.Id != request.UserId)
                     return BadRequest("Invalid User");
 
                 topic.Color = request.Color;
@@ -108,8 +109,9 @@ namespace Revision_API.Controllers
 
                 if (user is null)
                     return BadRequest("User not found");
-
-                return Ok(_context.Topics.Where(x => x.UserId == id).ToList());
+                var topics = _context.Topics.Where(x => x.User.Id == id).Select(x => TopicDto.MapFromDbObject(x));
+                
+                return Ok(new GetTopicsResponse{Topics = topics.ToList()});
             }catch(Exception e)
             {
                 return BadRequest(e.Message);
